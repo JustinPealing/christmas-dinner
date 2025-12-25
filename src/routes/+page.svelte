@@ -3,9 +3,14 @@
 
 	let itemName = '';
 	let cookingTime = '';
+	let offset = '0';
 
-	// Reactive sorted items (longest cooking time first)
-	$: sortedItems = [...$items].sort((a, b) => b.cookingTime - a.cookingTime);
+	// Reactive sorted items (longest cooking time + offset first)
+	$: sortedItems = [...$items].sort((a, b) => {
+		const totalA = a.cookingTime + (a.offset || 0);
+		const totalB = b.cookingTime + (b.offset || 0);
+		return totalB - totalA;
+	});
 
 	function addItem() {
 		if (!itemName.trim() || !cookingTime || cookingTime < 1) return;
@@ -15,13 +20,15 @@
 			{
 				id: Date.now(),
 				name: itemName.trim(),
-				cookingTime: parseInt(cookingTime)
+				cookingTime: parseInt(cookingTime),
+				offset: parseInt(offset) || 0
 			}
 		]);
 
 		// Clear form
 		itemName = '';
 		cookingTime = '';
+		offset = '0';
 	}
 
 	function deleteItem(id) {
@@ -51,6 +58,11 @@
 			min="1"
 			required
 		/>
+		<input
+			type="number"
+			bind:value={offset}
+			placeholder="Time offset (e.g., +5 minutes)"
+		/>
 		<button type="submit">Add Item</button>
 	</form>
 
@@ -63,7 +75,12 @@
 				<div class="item">
 					<span class="order">{index + 1}.</span>
 					<span class="name">{item.name}</span>
-					<span class="time">{item.cookingTime} min</span>
+					<span class="time">
+					{item.cookingTime} min
+					{#if item.offset && item.offset !== 0}
+						<span class="offset">+{item.offset} min</span>
+					{/if}
+				</span>
 					<button type="button" on:click={() => deleteItem(item.id)}>Delete</button>
 				</div>
 			{/each}
@@ -194,6 +211,13 @@
 		color: #2d5016;
 		font-size: 0.95rem;
 		white-space: nowrap;
+	}
+
+	.offset {
+		font-size: 0.85rem;
+		color: #666;
+		margin-left: 0.25rem;
+		font-weight: normal;
 	}
 
 	.empty-state {
