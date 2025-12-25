@@ -37,12 +37,12 @@
 </script>
 
 <svelte:head>
-	<title>Christmas Dinner Planner</title>
+	<title>Justin's Christmas Dinner Planner</title>
 	<meta name="description" content="Plan your Christmas dinner cooking schedule" />
 </svelte:head>
 
 <main>
-	<h1>Christmas Dinner Planner</h1>
+	<h1>Justin's Christmas Dinner Planner</h1>
 
 	<form on:submit|preventDefault={addItem}>
 		<input
